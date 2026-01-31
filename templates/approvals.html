@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Pending Approvals{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <div class="dashboard-header">
+        <h2>Pending Approvals</h2>
+        <p>Requests awaiting your authorization</p>
+    </div>
+
+    {% if requests %}
+    <div class="data-grid">
+
+        {% for req in requests %}
+        <div class="data-card">
+
+            <h3>{{ req.filename }}</h3>
+
+            <div class="data-content">
+                Requested by: <strong>{{ req.name }}</strong><br>
+                Requested on: {{ req.created_at }}<br>
+                Status: <span class="badge">Pending</span>
+            </div>
+            <a href="{{ url_for('static', filename='uploads/' ~req.stored_filename) }}"
+                class="btn-secondary"
+                target="_blank">Preview File</a><br>
+            <form method="POST" action="{{ url_for('approve', req_id=req.id) }}">
+                <button class="btn-primary" type="submit">Approve</button>
+            </form>
+
+            <form method="POST" action="{{ url_for('reject', req_id=req.id) }}" style="margin-top:8px;">
+                <input
+                    type="text"
+                    name="remark"
+                    placeholder="Reason for rejection"
+                    required
+                    style="margin-bottom:6px;"
+                >
+                <button class="btn-secondary" type="submit">Reject</button>
+            </form>
+
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No pending approvals</p>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

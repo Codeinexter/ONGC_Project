@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}File Preview{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+
+    <div class="dashboard-header">
+        <h2>{{ item.filename }}</h2>
+    </div>
+
+    <div class="data-card">
+
+        <div class="data-content">
+            <p><strong>Type:</strong> {{ item.file_type | upper }}</p>
+            <p><strong>Visibility:</strong> {{ item.visibility | capitalize }}</p>
+            <p><strong>Uploaded:</strong> {{ item.created_at }}</p>
+        </div>
+
+        <!-- Preview Area -->
+        {% if item.file_type in ["png", "jpg", "jpeg", "gif"] %}
+            <img
+                src="{{ url_for('serve_file', stored_filename=item.stored_filename) }}"
+                class="preview-media"
+                alt="File preview"
+            >
+        {% elif item.file_type == "pdf" %}
+            <iframe
+                src="{{ url_for('serve_file', stored_filename=item.stored_filename) }}"
+                class="preview-media"
+            ></iframe>
+        {% else %}
+            <p class="empty-state">Preview not available</p>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="dashboard-actions" style="margin-top: 16px;">
+            <a
+                href="{{ url_for('serve_file', stored_filename=item.stored_filename) }}"
+                download
+                class="btn-primary"
+            >
+                Download
+            </a>
+
+            <a href="{{ url_for('dashboard') }}" class="btn-secondary">
+                Back
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

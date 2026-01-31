@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Data{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+
+    <h2>Upload File</h2>
+    <p class="subtitle">Share files securely based on visibility rules</p>
+
+    <form method="POST" enctype="multipart/form-data" class="upload-form">
+
+        <!-- File Upload -->
+        <label class="file-drop">
+            <input type="file" name="file" style="width: 180px;;" required>
+            <span class="file-icon">📁</span>
+            <span class="file-text">Click to choose a file</span>
+            <span class="file-hint">PDF, Images, ZIP, CSV (Max 2MB)</span>
+        </label>
+
+        <!-- Visibility -->
+        <div class="field-group">
+            <label>Visibility Level</label>
+            <select name="visibility" required>
+                <option value="user">User</option>
+                <option value="moderator">Moderator</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Upload</button>
+            <a href="{{ url_for('dashboard') }}" class="btn-secondary">Cancel</a>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

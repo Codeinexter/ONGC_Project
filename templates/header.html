@@ -1,0 +1,17 @@
+<header class="app-header">
+    <div class="logo">
+        ONGC
+    </div>
+
+    <nav class="nav-links">
+        {% if session.get("user_id") %}
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('home') }}">Profile</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        {% else %}
+            <a href="{{ url_for('index') }}">Welcome</a>
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-primary">Register</a>
+        {% endif %}
+    </nav>
+</header>

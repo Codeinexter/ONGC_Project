@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP{% endblock %}
+
+{% block content %}
+<h2>Verify Account</h2>
+
+<form method="POST">
+    <p>Email Verification</p>
+    <input type="text" name="email_otp" placeholder="Enter OTP" required>
+    <!-- <p>Mobile Verification</p>
+    <input type="text" name="mobile_otp" placeholder="Enter OTP" required> -->
+    <button type="submit" class="btn-primary">Verify</button>
+</form>
+
+<p>OTP sent to your email.</p>
+{% endblock %}

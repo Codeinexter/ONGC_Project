@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2>Dashboard</h2>
+        <p>Privilege: <strong>{{ privilege|capitalize }}</strong></p>
+
+        <div class="dashboard-actions">
+            <a href="{{ url_for('upload') }}" class="btn-primary">+ Upload Data</a>
+        </div>
+    </div>
+    <div class="dashboard-actions">
+        <a href="{{ url_for('generate_pdf_report') }}" class="btn-secondary">
+            Download PDF Report
+        </a>
+        <a href="{{ url_for('generate_excel_report') }}" class="btn-secondary">
+            Download Excel Report
+        </a>
+    </div><br><hr>
+
+    <div><br>
+        <h4>Uploaded Data</h4>
+    </div><br>
+
+    <!-- File Grid -->
+    <div class="data-grid">
+
+        {% if data_items %}
+            {% for item in data_items %}
+            <div class="data-card">
+
+                <h3 style="display: flex;">{{ item.filename }}</h3>
+
+                <div class="data-content">
+                    Type: {{ item.file_type | upper }} <br>
+                    Visibility: {{ item.visibility | capitalize }} <br>
+                    Uploaded by: {{ item.uploader_privilege | capitalize }} <br>
+                    Status: {{ item.approval_status | capitalize }}
+                </div>
+
+                <div class="data-meta">
+                    <span>Uploaded: {{ item.created_at }}</span>
+                </div>
+
+                <!-- Actions -->
+                <div class="dashboard-actions" style="margin-top: 12px;">
+
+                    <a href="{{ url_for('static', filename='uploads/' ~ item.stored_filename) }}"
+                    target="_blank"
+                    class="btn-secondary">
+                        Preview
+                    </a>
+
+                    <a href="{{ url_for('static', filename='uploads/' ~ item.stored_filename) }}"
+                    download
+                    class="btn-secondary">
+                        Download
+                    </a>
+
+                    {% if item.uploaded_by == session.user_id or privilege == 'admin' %}
+                    <form method="POST"
+                        action="{{ url_for('delete_file', file_id=item.id) }}"
+                        onsubmit="return confirm('Delete this file permanently?');">
+                        <button type="submit" class="btn-primary">
+                            Delete
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>No files available</p>
+            </div>
+        {% endif %}
+    </div>
+    {% if role == "user" and pending_user_files %}
+    <h3>Files Waiting for Approval</h3>
+    <div class="data-grid">
+        {% for file in pending_user_files %}
+        <div class="data-card">
+            <h3>{{ file.filename }}</h3>
+            <div class="data-content">
+                Status: <span class="badge">Pending</span>
+            </div>
+            <form
+            method="POST"
+            action="{{ url_for('delete_pending', data_id=file.id) }}"
+            onsubmit="return confirm('Delete this pending file?');">
+            <button class="btn-secondary" type="submit">
+                Delete
+            </button>
+        </form>
+        </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if role == "moderator" and moderator_pending %}
+    <h3>Files Awaiting Your Approval</h3>
+    <div class="data-grid">
+        {% for req in moderator_pending %}
+        <div class="data-card">
+            <h3>{{ req.filename }}</h3>
+            <div class="data-content">
+                Requested by: {{ req.name }}
+            </div>
+            <a href="{{ url_for('approvals') }}" class="btn-primary">
+                Review
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if role == "moderator" and moderator_waiting_admin %}
+    <h3>Waiting for Admin Approval</h3>
+    <div class="data-grid">
+        {% for file in moderator_waiting_admin %}
+        <div class="data-card">
+            <h3>{{ file.filename }}</h3>
+            <div class="data-content">
+                Status: <span class="badge">Pending (Admin)</span>
+            </div>
+            <form
+            method="POST"
+            action="{{ url_for('delete_pending', data_id=file.id) }}"
+            onsubmit="return confirm('Delete this pending file?');">
+            <button class="btn-secondary" type="submit">
+                Delete
+            </button>
+        </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if role == "admin" and admin_pending %}
+    <h3>Files Awaiting Approval</h3>
+    <div class="data-grid">
+        {% for req in admin_pending %}
+        <div class="data-card">
+            <h3>{{ req.filename }}</h3>
+            <div class="data-content">
+                Requested by: {{ req.name }}
+            </div>
+            <a href="{{ url_for('approvals') }}" class="btn-primary">
+                Review
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if rejected_files %}
+    <h3>Rejected Files</h3>
+    <div class="data-grid">
+        {% for file in rejected_files %}
+        <div class="data-card">
+            <h3>{{ file.filename }}</h3>
+            <div class="data-content">
+                Status:
+                <span class="badge">Rejected</span>
+            </div>
+            <form
+            method="POST"
+            action="{{ url_for('delete_pending', data_id=file.id) }}"
+            onsubmit="return confirm('Delete this rejected file?');">
+            <button class="btn-secondary" type="submit">
+                Delete
+            </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

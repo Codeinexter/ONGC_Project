@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<h1>Oil and Natural Gas Corporation of India Ltd.</h1>
+<p>Welcome to the ONGC portal. Please register or login to continue.</p>
+<p>New to ONGC? No issues! Register now</p>
+<br>
+<a class="btn-primary" href="{{ url_for('register') }}">Register</a>
+<br><br>
+<p>Already registered? Login now</p>
+<br>
+<a class="btn-primary" href="{{ url_for('login') }}">Login</a>
+{% endblock %}
